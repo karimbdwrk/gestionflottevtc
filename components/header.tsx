@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -13,8 +14,8 @@ export function Header() {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-semibold tracking-tight text-foreground">
-              GestionFlotteVTC
+            <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
+              DRIVE PRO
             </Link>
             <div className="hidden md:flex items-center gap-6">
               <Link href="#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -32,6 +33,7 @@ export function Header() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Button variant="ghost" size="sm">
               Connexion
             </Button>
@@ -39,13 +41,16 @@ export function Header() {
               Commencer
             </Button>
           </div>
-          <button
-            type="button"
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="md:hidden flex items-center gap-1">
+            <ThemeToggle />
+            <button
+              type="button"
+              className="p-2 text-muted-foreground hover:text-foreground"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
