@@ -9,17 +9,17 @@ export function Hero() {
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-sm text-muted-foreground mb-6">
               <span className="h-2 w-2 rounded-full bg-accent" />
-              Partenaire officiel Uber, Bolt & Heetch
+              Partenaire officiel Uber, Bolt, Heetch & FreeNow
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground leading-tight text-balance">
-              La plateforme complète pour gérer votre flotte VTC
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground leading-tight text-balance">
+              Travaillez dès aujourd’hui avec DRIVE PRO
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              Connectez vos chauffeurs aux principales applications de VTC. Gérez votre flotte, suivez vos performances et maximisez vos revenus en toute simplicité.
+              Activation rapide, assistance administrative, support 7j/7 et paiement chaque semaine : tout est mis en place pour vous permettre de commencer à travailler sans perdre de temps, et maximiser vos gains.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="gap-2">
-                Demander un accès
+                Contactez-nous
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="outline">
@@ -31,7 +31,7 @@ export function Hero() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
-                  <div className="text-3xl font-semibold text-foreground">+2500</div>
+                  <div className="text-3xl font-semibold text-foreground">+250</div>
                   <div className="text-sm text-muted-foreground mt-1">Chauffeurs actifs</div>
                 </div>
                 <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
@@ -45,7 +45,7 @@ export function Hero() {
                   <div className="text-sm text-muted-foreground mt-1">Support disponible</div>
                 </div>
                 <div className="bg-primary rounded-xl p-6 shadow-sm">
-                  <div className="text-3xl font-semibold text-primary-foreground">3</div>
+                  <div className="text-3xl font-semibold text-primary-foreground">4</div>
                   <div className="text-sm text-primary-foreground/80 mt-1">Plateformes intégrées</div>
                 </div>
               </div>
@@ -57,9 +57,10 @@ export function Hero() {
         <div className="mt-20 pt-12 border-t border-border">
           <p className="text-sm text-muted-foreground text-center mb-8">Connecté aux principales plateformes VTC</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16">
-            <div className="text-2xl font-bold text-foreground/80">uber</div>
+            <div className="text-2xl font-bold text-foreground/80">Uber</div>
             <div className="text-2xl font-bold text-foreground/80">Bolt</div>
-            <div className="text-2xl font-bold text-foreground/80">heetch</div>
+            <div className="text-2xl font-bold text-foreground/80">Heetch</div>
+            <div className="text-2xl font-bold text-foreground/80">FreeNow</div>
           </div>
         </div>
       </div>
