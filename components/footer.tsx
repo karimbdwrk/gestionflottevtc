@@ -29,14 +29,14 @@ const navigation = {
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className="bg-zinc-900 dark:bg-background/80 text-zinc-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="text-xl font-semibold">
-              FleetConnect
+              DRIVE PRO
             </Link>
-            <p className="mt-4 text-sm text-primary-foreground/70 max-w-xs">
+            <p className="mt-4 text-sm text-zinc-400 max-w-xs">
               La plateforme de référence pour la gestion de flottes VTC en France.
             </p>
           </div>
@@ -47,7 +47,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+                    className="text-sm text-zinc-400 hover:text-zinc-50 transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -62,7 +62,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+                    className="text-sm text-zinc-400 hover:text-zinc-50 transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -77,7 +77,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+                    className="text-sm text-zinc-400 hover:text-zinc-50 transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -92,7 +92,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+                    className="text-sm text-zinc-400 hover:text-zinc-50 transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -101,8 +101,8 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-primary-foreground/10">
-          <p className="text-sm text-primary-foreground/70 text-center">
+        <div className="mt-12 pt-8 border-t border-zinc-700">
+          <p className="text-sm text-zinc-400 text-center">
             © {new Date().getFullYear()} FleetConnect. Tous droits réservés.
           </p>
         </div>
