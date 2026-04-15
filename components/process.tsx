@@ -17,7 +17,7 @@ const steps = [
     number: "03",
     icon: Link2,
     title: "Rattachement aux plateformes",
-    description: "Nous connectons vos chauffeurs à Uber, Bolt et Heetch selon votre forfait.",
+    description: "Nous connectons vos chauffeurs à Uber, Bolt, Heetch & FreeNow selon votre forfait.",
   },
   {
     number: "04",
