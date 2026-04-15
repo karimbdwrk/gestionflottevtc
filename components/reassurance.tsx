@@ -24,17 +24,17 @@ const features = [
   {
     icon: Award,
     title: "Partenaire certifié",
-    description: "Nous sommes partenaires officiels d&apos;Uber, Bolt et Heetch pour une intégration optimale.",
+    description: "Nous sommes partenaires officiels : Uber, Bolt, Heetch & FreeNow pour une intégration optimale.",
   },
   {
     icon: Users,
     title: "Communauté active",
-    description: "Rejoignez plus de 2500 gestionnaires de flotte qui nous font confiance.",
+    description: "Rejoignez plus de 250 chauffeurs qui nous font confiance.",
   },
 ]
 
 const stats = [
-  { value: "2500+", label: "Chauffeurs actifs" },
+  { value: "250+", label: "Chauffeurs actifs" },
   { value: "15M€", label: "Revenus générés" },
   { value: "98%", label: "Satisfaction client" },
   { value: "24h", label: "Délai d'activation" },
@@ -46,7 +46,7 @@ export function Reassurance() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground text-balance">
-            Pourquoi choisir FleetConnect
+            Pourquoi choisir <span className="font-bold">DRIVE PRO</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Une solution fiable et performante pour développer votre activité VTC
