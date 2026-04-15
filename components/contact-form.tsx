@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { MapPin, Phone, Mail } from "lucide-react"
+import { MapPin, Phone, Mail, CheckCircle2 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -17,11 +18,31 @@ export function ContactForm() {
     fleetSize: "",
     message: "",
   })
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [errorMsg, setErrorMsg] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log("Form submitted:", formData)
+    setStatus("loading")
+    setErrorMsg("")
+
+    const supabase = createClient()
+    const { error } = await supabase.from("contacts").insert({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || null,
+      company: formData.company || null,
+      fleet_size: formData.fleetSize || null,
+      message: formData.message || null,
+    })
+
+    if (error) {
+      setErrorMsg("Une erreur est survenue. Veuillez réessayer.")
+      setStatus("error")
+      return
+    }
+
+    setStatus("success")
   }
 
   return (
@@ -37,7 +58,7 @@ export function ContactForm() {
             </p>
 
             <div className="mt-10 space-y-6">
-              <div className="flex items-start gap-4">
+              {/* <div className="flex items-start gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-card border border-border">
                   <MapPin className="h-5 w-5 text-muted-foreground" />
                 </div>
@@ -48,13 +69,13 @@ export function ContactForm() {
                     75008 Paris, France
                   </p>
                 </div>
-              </div>
+              </div> */}
               <div className="flex items-start gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-card border border-border">
                   <Phone className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-foreground">Téléphone</h3>
+                  <h3 className="font-medium text-foreground">WhatsApp</h3>
                   <p className="text-sm text-muted-foreground mt-1">+33 1 23 45 67 89</p>
                 </div>
               </div>
@@ -64,7 +85,7 @@ export function ContactForm() {
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground">Email</h3>
-                  <p className="text-sm text-muted-foreground mt-1">contact@fleetconnect.fr</p>
+                  <p className="text-sm text-muted-foreground mt-1">contact@drivepro.fr</p>
                 </div>
               </div>
             </div>
@@ -144,12 +165,17 @@ export function ContactForm() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 />
               </div>
-              <Button type="submit" className="w-full" size="lg">
-                Envoyer ma demande
+              <Button type="submit" className="w-full" size="lg" disabled={status === "loading" || status === "success"}>
+                {status === "loading" ? "Envoi en cours..." : status === "success" ? "Message envoyé ✓" : "Envoyer ma demande"}
               </Button>
-              <p className="text-xs text-muted-foreground text-center">
-                En soumettant ce formulaire, vous acceptez notre politique de confidentialité.
-              </p>
+              {status === "error" && (
+                <p className="text-sm text-destructive text-center">{errorMsg}</p>
+              )}
+              {status !== "success" && (
+                <p className="text-xs text-muted-foreground text-center">
+                  En soumettant ce formulaire, vous acceptez notre politique de confidentialité.
+                </p>
+              )}
             </form>
           </div>
         </div>
