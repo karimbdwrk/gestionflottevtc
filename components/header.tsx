@@ -34,11 +34,11 @@ export function Header() {
           </div>
           <div className="hidden md:flex items-center gap-4">
             <ThemeToggle />
-            <Button variant="ghost" size="sm">
+            {/* <Button variant="ghost" size="sm">
               Connexion
-            </Button>
+            </Button> */}
             <Button size="sm" asChild>
-              <Link href="/inscription">Commencer</Link>
+              <Link href="/inscription">S'inscrire</Link>
             </Button>
           </div>
           <div className="md:hidden flex items-center gap-1">
@@ -68,11 +68,11 @@ export function Header() {
                 Contact
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                <Button variant="ghost" size="sm" className="justify-start">
+                {/* <Button variant="ghost" size="sm" className="justify-start">
                   Connexion
-                </Button>
+                </Button> */}
                 <Button size="sm" asChild>
-                  <Link href="/inscription">Commencer</Link>
+                  <Link href="/inscription">S'inscrire</Link>
                 </Button>
               </div>
             </div>
