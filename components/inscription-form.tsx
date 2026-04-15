@@ -1,0 +1,429 @@
+"use client"
+
+import { useState, useRef } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Upload, CheckCircle2, FileText, AlertCircle } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
+
+const PLATFORMS = [
+  { id: "uber", label: "Uber" },
+  { id: "bolt", label: "Bolt" },
+  { id: "heetch", label: "Heetch" },
+]
+
+const DOCUMENTS = [
+  { id: "identity", label: "Pièce d'identité", description: "CNI recto/verso ou passeport", required: true },
+  { id: "permis", label: "Permis de conduire", description: "Recto/verso en cours de validité", required: true },
+  { id: "carte_vtc", label: "Carte professionnelle VTC", description: "Delivrée par la préfecture", required: true },
+  { id: "assurance", label: "Attestation d'assurance", description: "Assurance VTC du véhicule", required: true },
+  { id: "casier", label: "Extrait de casier judiciaire", description: "Bulletin n°3 (moins de 3 mois)", required: true },
+  { id: "domicile", label: "Justificatif de domicile", description: "Moins de 3 mois", required: false },
+  { id: "kbis", label: "Kbis ou attestation URSSAF", description: "Si auto-entrepreneur ou société", required: false },
+]
+
+type FileMap = Record<string, File | null>
+type PlatformMap = Record<string, boolean>
+
+function FileUploadZone({
+  docId,
+  label,
+  description,
+  required,
+  file,
+  onChange,
+}: {
+  docId: string
+  label: string
+  description: string
+  required: boolean
+  file: File | null
+  onChange: (id: string, file: File | null) => void
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  return (
+    <div
+      className={cn(
+        "relative border rounded-xl p-4 cursor-pointer transition-colors group",
+        file
+          ? "border-foreground/30 bg-muted/40"
+          : "border-dashed border-border hover:border-foreground/30 hover:bg-muted/20"
+      )}
+      onClick={() => inputRef.current?.click()}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        className="hidden"
+        accept=".pdf,.jpg,.jpeg,.png"
+        onChange={(e) => onChange(docId, e.target.files?.[0] ?? null)}
+      />
+      <div className="flex items-start gap-3">
+        <div className={cn(
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+          file ? "bg-foreground text-background" : "bg-muted"
+        )}>
+          {file ? <CheckCircle2 className="h-5 w-5" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-medium text-foreground">{label}</span>
+            {required && <span className="text-xs text-muted-foreground">*</span>}
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5 truncate">
+            {file ? file.name : description}
+          </p>
+        </div>
+        {file && (
+          <button
+            type="button"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            onClick={(e) => {
+              e.stopPropagation()
+              onChange(docId, null)
+              if (inputRef.current) inputRef.current.value = ""
+            }}
+          >
+            Retirer
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function InscriptionForm() {
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+  const [platforms, setPlatforms] = useState<PlatformMap>({ uber: false, bolt: false, heetch: false })
+  const [files, setFiles] = useState<FileMap>(
+    Object.fromEntries(DOCUMENTS.map((d) => [d.id, null]))
+  )
+  const [formData, setFormData] = useState({
+    prenom: "",
+    nom: "",
+    email: "",
+    telephone: "",
+    dateNaissance: "",
+    adresse: "",
+    experience: "",
+    forfait: "",
+    message: "",
+  })
+
+  const missingRequired = DOCUMENTS.filter((d) => d.required && !files[d.id])
+  const noPlatform = !Object.values(platforms).some(Boolean)
+
+  const handleFile = (id: string, file: File | null) => {
+    setFiles((prev) => ({ ...prev, [id]: file }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (missingRequired.length > 0 || noPlatform) return
+    setSubmitting(true)
+    setSubmitError("")
+
+    const supabase = createClient()
+
+    // 1. Insérer la demande en base
+    const { data: demande, error: insertError } = await supabase
+      .from("demandes_inscription")
+      .insert({
+        prenom: formData.prenom,
+        nom: formData.nom,
+        email: formData.email,
+        telephone: formData.telephone,
+        date_naissance: formData.dateNaissance || null,
+        adresse: formData.adresse,
+        experience: formData.experience || null,
+        forfait: formData.forfait || null,
+        message: formData.message || null,
+        plateformes: Object.keys(platforms).filter((k) => platforms[k]),
+        statut: "en_attente",
+      })
+      .select("id")
+      .single()
+
+    if (insertError || !demande) {
+      setSubmitError("Une erreur est survenue. Veuillez réessayer.")
+      setSubmitting(false)
+      return
+    }
+
+    // 2. Uploader les documents dans Supabase Storage
+    const uploadErrors: string[] = []
+    for (const doc of DOCUMENTS) {
+      const file = files[doc.id]
+      if (!file) continue
+      const ext = file.name.split(".").pop()
+      const path = `${demande.id}/${doc.id}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from("documents-inscription")
+        .upload(path, file, { upsert: true })
+      if (uploadError) uploadErrors.push(doc.label)
+    }
+
+    if (uploadErrors.length > 0) {
+      setSubmitError(`Demande enregistrée mais erreur sur : ${uploadErrors.join(", ")}. Contactez-nous.`)
+      setSubmitting(false)
+      return
+    }
+
+    setSubmitting(false)
+    setSubmitted(true)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center px-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-foreground mb-6">
+          <CheckCircle2 className="h-8 w-8 text-background" />
+        </div>
+        <h2 className="text-2xl font-semibold text-foreground">Demande envoyée !</h2>
+        <p className="mt-3 text-muted-foreground max-w-md">
+          Votre dossier a bien été reçu. Notre équipe l'examine et vous contacte sous 24–48h pour confirmer votre accès à la plateforme.
+        </p>
+        <Button className="mt-8" onClick={() => (window.location.href = "/")}>
+          Retour à l'accueil
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-10">
+
+      {/* Informations personnelles */}
+      <section className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Informations personnelles</h2>
+          <p className="text-sm text-muted-foreground mt-1">Vos coordonnées pour vous identifier et vous recontacter.</p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="prenom">Prénom <span className="text-muted-foreground">*</span></Label>
+            <Input
+              id="prenom"
+              placeholder="Mohamed"
+              required
+              value={formData.prenom}
+              onChange={(e) => setFormData((p) => ({ ...p, prenom: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="nom">Nom <span className="text-muted-foreground">*</span></Label>
+            <Input
+              id="nom"
+              placeholder="Benali"
+              required
+              value={formData.nom}
+              onChange={(e) => setFormData((p) => ({ ...p, nom: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email <span className="text-muted-foreground">*</span></Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="vous@exemple.fr"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="telephone">Téléphone <span className="text-muted-foreground">*</span></Label>
+            <Input
+              id="telephone"
+              type="tel"
+              placeholder="+33 6 12 34 56 78"
+              required
+              value={formData.telephone}
+              onChange={(e) => setFormData((p) => ({ ...p, telephone: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="dateNaissance">Date de naissance <span className="text-muted-foreground">*</span></Label>
+            <Input
+              id="dateNaissance"
+              type="date"
+              required
+              value={formData.dateNaissance}
+              onChange={(e) => setFormData((p) => ({ ...p, dateNaissance: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="adresse">Adresse complète <span className="text-muted-foreground">*</span></Label>
+          <Input
+            id="adresse"
+            placeholder="12 rue de la Paix, 75001 Paris"
+            required
+            value={formData.adresse}
+            onChange={(e) => setFormData((p) => ({ ...p, adresse: e.target.value }))}
+          />
+        </div>
+      </section>
+
+      {/* Informations professionnelles */}
+      <section className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Informations professionnelles</h2>
+          <p className="text-sm text-muted-foreground mt-1">Votre expérience et les plateformes qui vous intéressent.</p>
+        </div>
+
+        <div className="space-y-3">
+          <Label>Plateformes souhaitées <span className="text-muted-foreground">*</span></Label>
+          <div className="flex flex-wrap gap-4">
+            {PLATFORMS.map((p) => (
+              <label key={p.id} className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  id={p.id}
+                  checked={platforms[p.id]}
+                  onCheckedChange={(checked) =>
+                    setPlatforms((prev) => ({ ...prev, [p.id]: !!checked }))
+                  }
+                />
+                <span className="text-sm font-medium text-foreground">{p.label}</span>
+              </label>
+            ))}
+          </div>
+          {noPlatform && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" /> Sélectionnez au moins une plateforme
+            </p>
+          )}
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="experience">Expérience VTC</Label>
+            <Select onValueChange={(v) => setFormData((p) => ({ ...p, experience: v }))}>
+              <SelectTrigger id="experience">
+                <SelectValue placeholder="Sélectionner..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="debutant">Débutant (moins de 6 mois)</SelectItem>
+                <SelectItem value="1an">1 an</SelectItem>
+                <SelectItem value="2-3ans">2 à 3 ans</SelectItem>
+                <SelectItem value="plus3ans">Plus de 3 ans</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="forfait">Forfait souhaité</Label>
+            <Select onValueChange={(v) => setFormData((p) => ({ ...p, forfait: v }))}>
+              <SelectTrigger id="forfait">
+                <SelectValue placeholder="Sélectionner..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="essentiel">Essentiel — 50€/semaine</SelectItem>
+                <SelectItem value="commission">Commission — À partir de 70€/semaine</SelectItem>
+                <SelectItem value="mesure">Sur mesure — Sur devis</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="message">Message (facultatif)</Label>
+          <Textarea
+            id="message"
+            placeholder="Présentez-vous, posez vos questions ou précisez votre situation..."
+            rows={4}
+            value={formData.message}
+            onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
+          />
+        </div>
+      </section>
+
+      {/* Documents */}
+      <section className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Documents requis</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Formats acceptés : PDF, JPG, PNG. Taille max 10 Mo par fichier.{" "}
+            <span className="text-foreground">Les champs * sont obligatoires.</span>
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-3">
+          {DOCUMENTS.map((doc) => (
+            <FileUploadZone
+              key={doc.id}
+              docId={doc.id}
+              label={doc.label}
+              description={doc.description}
+              required={doc.required}
+              file={files[doc.id]}
+              onChange={handleFile}
+            />
+          ))}
+        </div>
+
+        {missingRequired.length > 0 && (
+          <div className="flex items-start gap-2 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
+            <FileText className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>
+              Documents manquants :{" "}
+              <span className="text-foreground font-medium">
+                {missingRequired.map((d) => d.label).join(", ")}
+              </span>
+            </span>
+          </div>
+        )}
+      </section>
+
+      {/* CGU + submit */}
+      <div className="space-y-4">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <Checkbox id="cgu" required className="mt-0.5" />
+          <span className="text-sm text-muted-foreground leading-relaxed">
+            J'accepte les{" "}
+            <a href="/cgu" className="text-foreground underline underline-offset-2 hover:no-underline">
+              Conditions Générales d'Utilisation
+            </a>{" "}
+            et la{" "}
+            <a href="/confidentialite" className="text-foreground underline underline-offset-2 hover:no-underline">
+              Politique de Confidentialité
+            </a>
+            . *
+          </span>
+        </label>
+
+        {submitError && (
+          <p className="text-sm text-destructive flex items-center gap-1.5">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {submitError}
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full sm:w-auto"
+          disabled={missingRequired.length > 0 || noPlatform || submitting}
+        >
+          {submitting ? "Envoi en cours..." : "Envoyer ma demande"}
+        </Button>
+      </div>
+    </form>
+  )
+}
