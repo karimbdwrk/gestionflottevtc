@@ -10,28 +10,28 @@ const navigation = {
   company: [
     { name: "À propos", href: "#" },
     { name: "Carrières", href: "#" },
-    { name: "Blog", href: "#" },
-    { name: "Presse", href: "#" },
+    // { name: "Blog", href: "#" },
+    // { name: "Presse", href: "#" },
   ],
   legal: [
-    { name: "CGU", href: "#" },
-    { name: "CGV", href: "#" },
-    { name: "Confidentialité", href: "#" },
+    { name: "CGU", href: "/cgu" },
+    // { name: "CGV", href: "#" },
+    { name: "Confidentialité", href: "/confidentialite" },
     { name: "Cookies", href: "#" },
   ],
-  social: [
-    { name: "LinkedIn", href: "#" },
-    { name: "Twitter", href: "#" },
-    { name: "Facebook", href: "#" },
-    { name: "Instagram", href: "#" },
-  ],
+  // social: [
+  //   { name: "LinkedIn", href: "#" },
+  //   { name: "Twitter", href: "#" },
+  //   { name: "Facebook", href: "#" },
+  //   { name: "Instagram", href: "#" },
+  // ],
 }
 
 export function Footer() {
   return (
     <footer className="bg-zinc-900 dark:bg-background/80 text-zinc-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="text-xl font-semibold">
               DRIVE PRO
@@ -85,7 +85,7 @@ export function Footer() {
               ))}
             </ul>
           </div>
-          <div>
+          {/* <div>
             <h3 className="text-sm font-semibold mb-4">Social</h3>
             <ul className="space-y-3">
               {navigation.social.map((item) => (
@@ -99,11 +99,11 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
         <div className="mt-12 pt-8 border-t border-zinc-700">
           <p className="text-sm text-zinc-400 text-center">
-            © {new Date().getFullYear()} FleetConnect. Tous droits réservés.
+            © {new Date().getFullYear()} DRIVE PRO. Tous droits réservés.
           </p>
         </div>
       </div>
