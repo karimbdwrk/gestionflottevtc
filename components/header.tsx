@@ -37,8 +37,8 @@ export function Header() {
             <Button variant="ghost" size="sm">
               Connexion
             </Button>
-            <Button size="sm">
-              Commencer
+            <Button size="sm" asChild>
+              <Link href="/inscription">Commencer</Link>
             </Button>
           </div>
           <div className="md:hidden flex items-center gap-1">
@@ -71,8 +71,8 @@ export function Header() {
                 <Button variant="ghost" size="sm" className="justify-start">
                   Connexion
                 </Button>
-                <Button size="sm">
-                  Commencer
+                <Button size="sm" asChild>
+                  <Link href="/inscription">Commencer</Link>
                 </Button>
               </div>
             </div>
