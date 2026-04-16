@@ -75,9 +75,9 @@ export function Hero() {
         {/* Partner Logos */}
         <div className="mt-20 border-t border-border pt-12">
           <p className="mb-8 text-center text-sm text-muted-foreground">
-            Connecté aux principales plateformes VTC !
+            Connecté aux principales plateformes VTC
           </p>
-          <div className="flex flex-wrap items-end justify-center gap-12 md:gap-16">
+          <div className="flex flex-wrap items-end justify-center gap-12 md:gap-16 [&>div]:transition-opacity [&>div]:duration-200 [&>div]:hover:opacity-50">
             <div className="logo logo-uber">
               <svg
                 id="Layer_1"
