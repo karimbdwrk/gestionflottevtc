@@ -43,17 +43,17 @@ export function Hero() {
                 </div>
                 <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                   <div className="text-3xl font-semibold text-foreground">
-                    98%
+                    24h
                   </div>
                   <div className="mt-1 text-sm text-muted-foreground">
-                    Taux de satisfaction
+                    Mise en route rapide
                   </div>
                 </div>
               </div>
               <div className="space-y-4 pt-8">
                 <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                   <div className="text-3xl font-semibold text-foreground">
-                    24/7
+                    7j/7
                   </div>
                   <div className="mt-1 text-sm text-muted-foreground">
                     Support disponible
