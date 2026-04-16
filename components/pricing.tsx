@@ -5,6 +5,7 @@ const plans = [
   {
     name: "Essentiel",
     description: "Pour commencer rapidement avec un coût fixe",
+    prefix: "",
     price: "50€",
     period: "/semaine",
     features: [
@@ -20,7 +21,8 @@ const plans = [
   {
     name: "Commission",
     description: "Tarif flexible selon votre contrat",
-    price: "À partir de 70€",
+    prefix: "à partir de",
+    price: "70€",
     period: "/semaine",
     features: [
       "Commission selon contrat de travail",
@@ -36,6 +38,7 @@ const plans = [
   {
     name: "Sur mesure",
     description: "Pour les chauffeurs ou partenaires avec besoins spécifiques",
+    prefix: "",
     price: "Sur devis",
     period: "",
     features: [
@@ -86,10 +89,19 @@ export function Pricing() {
                 <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
               </div>
               <div className="mb-6">
-                <span className="text-4xl font-semibold text-foreground">
-                  {plan.price.includes("mesure") ? "" : "€"}{plan.price}
-                </span>
-                <span className="text-muted-foreground">{plan.period}</span>
+                {plan.prefix && (
+                  <span className="inline-block text-xs font-medium text-muted-foreground uppercase tracking-widest mb-1">
+                    {plan.prefix}
+                  </span>
+                )}
+                <div>
+                  <span className="text-4xl font-semibold text-foreground">
+                    {plan.price}
+                  </span>
+                  {plan.period && (
+                    <span className="text-muted-foreground">{plan.period}</span>
+                  )}
+                </div>
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
