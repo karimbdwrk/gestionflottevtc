@@ -1,7 +1,17 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const protectedPaths = ['/dashboard']
+
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  const isProtected = protectedPaths.some((path) => pathname.startsWith(path))
+
+  // Routes publiques : pas d'appel Supabase
+  if (!isProtected) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -23,16 +33,9 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // Rafraîchit la session — ne pas supprimer cet appel
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Routes protégées : redirige vers /connexion si non authentifié
-  const protectedPaths = ['/dashboard']
-  const isProtected = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  )
-
-  if (isProtected && !user) {
+  if (!user) {
     const url = request.nextUrl.clone()
     url.pathname = '/connexion'
     return NextResponse.redirect(url)
