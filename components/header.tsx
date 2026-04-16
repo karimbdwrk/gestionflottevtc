@@ -18,16 +18,16 @@ export function Header() {
               DRIVE PRO
             </Link>
             <div className="hidden md:flex items-center gap-6">
-              <Link href="#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Forfaits
               </Link>
-              <Link href="#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Comment ça marche
               </Link>
-              <Link href="#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Pourquoi nous
               </Link>
-              <Link href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Contact
               </Link>
             </div>
@@ -55,16 +55,16 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
-              <Link href="#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Forfaits
               </Link>
-              <Link href="#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Comment ça marche
               </Link>
-              <Link href="#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Pourquoi nous
               </Link>
-              <Link href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Contact
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
