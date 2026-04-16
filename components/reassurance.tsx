@@ -29,7 +29,7 @@ const features = [
   {
     icon: Users,
     title: "Plus de 250 chauffeurs actifs",
-    description: "Rejoignez une communauté de chauffeurs VTC qui nous font confiance au quotidien sur l'ensemble de l'Île-de-France.",
+    description: "Rejoignez une communauté de chauffeurs VTC qui nous font confiance au quotidien dans toute, la France.",
   },
 ]
 
