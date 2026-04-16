@@ -1,42 +1,42 @@
-import { Shield, Clock, Headphones, TrendingUp, Award, Users } from "lucide-react"
+import { Shield, Clock, Headphones, Banknote, Award, Users } from "lucide-react"
 
 const features = [
   {
-    icon: Shield,
-    title: "Sécurité garantie",
-    description: "Vos données et celles de vos chauffeurs sont protégées par un chiffrement de niveau bancaire.",
+    icon: Award,
+    title: "Rattachement VTC en 24h",
+    description: "Nous prenons en charge votre rattachement VTC sur Uber, Bolt, Heetch et FreeNow. Activation rapide, sans paperasse inutile.",
   },
   {
-    icon: Clock,
-    title: "Disponibilité 24/7",
-    description: "Notre plateforme est disponible en permanence pour que vos chauffeurs ne manquent aucune course.",
+    icon: Banknote,
+    title: "Paiement chaque semaine",
+    description: "Vos revenus sont versés chaque semaine, sans délai. Vous gardez une visibilité totale sur vos gains.",
   },
   {
     icon: Headphones,
-    title: "Support réactif",
-    description: "Une équipe dédiée répond à vos questions en moins de 2 heures en moyenne.",
+    title: "Support 7j/7",
+    description: "Notre équipe est disponible tous les jours pour répondre à vos questions et vous accompagner à chaque étape.",
   },
   {
-    icon: TrendingUp,
-    title: "Optimisation des revenus",
-    description: "Nos algorithmes vous aident à maximiser les courses et les revenus de votre flotte.",
+    icon: Shield,
+    title: "Assistance administrative",
+    description: "Gestion des documents, suivi des dossiers, renouvellements : on s'occupe de tout pour que vous puissiez vous concentrer sur la route.",
   },
   {
-    icon: Award,
-    title: "Partenaire certifié",
-    description: "Nous sommes partenaires officiels : Uber, Bolt, Heetch & FreeNow pour une intégration optimale.",
+    icon: Clock,
+    title: "Aucun engagement long terme",
+    description: "Pas de contrat bloquant. Vous êtes libre de faire évoluer votre formule selon votre activité.",
   },
   {
     icon: Users,
-    title: "Communauté active",
-    description: "Rejoignez plus de 250 chauffeurs qui nous font confiance.",
+    title: "Plus de 250 chauffeurs actifs",
+    description: "Rejoignez une communauté de chauffeurs VTC qui nous font confiance au quotidien sur l'ensemble de l'Île-de-France.",
   },
 ]
 
 const stats = [
   { value: "250+", label: "Chauffeurs actifs" },
-  { value: "15M€", label: "Revenus générés" },
-  { value: "98%", label: "Satisfaction client" },
+  { value: "4", label: "Plateformes intégrées" },
+  { value: "98%", label: "Taux de satisfaction" },
   { value: "24h", label: "Délai d'activation" },
 ]
 
@@ -46,10 +46,10 @@ export function Reassurance() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground text-balance">
-            Pourquoi choisir <span className="font-bold">DRIVE PRO</span>
+            Pourquoi choisir <span className="font-bold">DRIVE PRO</span> pour votre rattachement VTC
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Une solution fiable et performante pour développer votre activité VTC
+            Un accompagnement complet pour démarrer vite et rouler sereinement sur toutes les plateformes
           </p>
         </div>
 
