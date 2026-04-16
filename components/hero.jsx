@@ -8,17 +8,17 @@ export function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="max-w-xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-sm text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-accent" />
-              Partenaire officiel Uber, Bolt, Heetch & FreeNow
+              <span className="h-2 w-2 rounded-full bg-lime-300" />
+              Rattachement VTC — Uber, Bolt, Heetch & FreeNow
             </div>
-            <h1 className="text-3xl leading-tight font-semibold tracking-tight text-balance text-foreground md:text-4xl lg:text-5xl">
-              Travaillez dès aujourd’hui avec DRIVE PRO
+            <h1 className="text-3xl leading-tight font-bold tracking-tight text-balance text-foreground md:text-4xl lg:text-5xl">
+              Votre rattachement VTC en 24h
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              Activation rapide, assistance administrative, support 7j/7 et
-              paiement chaque semaine : tout est mis en place pour vous
-              permettre de commencer à travailler sans perdre de temps, et
-              maximiser vos gains.
+              DRIVE PRO prend en charge votre rattachement VTC sur Uber, Bolt,
+              Heetch et FreeNow. Activation rapide, paiement chaque semaine,
+              assistance administrative et support 7j/7 : commencez à rouler
+              sans perdre de temps.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <Button size="lg" className="gap-2">
