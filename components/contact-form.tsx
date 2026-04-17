@@ -19,6 +19,72 @@ export function ContactForm() {
   })
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
+  const [customSubject, setCustomSubject] = useState("")
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  const touch = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }))
+
+  function capitalizeSentences(text: string) {
+    return text.replace(/(^|[.!?]\s+)([a-z\u00e0-\u00ff])/g, (_, sep, char) => sep + char.toUpperCase())
+  }
+
+  function sanitizeName(text: string) {
+    const filtered = text.replace(/[^a-zA-Z\u00C0-\u024F\s-]/g, "")
+    return filtered
+      .split(" ")
+      .map((word) =>
+        word
+          .split("-")
+          .map((part) => (part ? part.charAt(0).toUpperCase() + part.slice(1) : ""))
+          .join("-")
+      )
+      .join(" ")
+  }
+
+  function formatPhone(raw: string) {
+    // Conserver uniquement chiffres et +
+    let digits = raw.replace(/[^\d]/g, "")
+    // Remplacer le 0 initial par +33 + chiffre suivant
+    if (digits.startsWith("0") && digits.length > 1) {
+      digits = "33" + digits.slice(1)
+    }
+    // Limiter à 11 chiffres (33 + 9 chiffres)
+    digits = digits.slice(0, 11)
+    if (!digits) return ""
+    // Formater +33 X XX XX XX XX
+    const parts = []
+    let rest = digits
+    if (rest.startsWith("33")) {
+      parts.push("+33")
+      rest = rest.slice(2)
+    }
+    if (rest.length > 0) parts.push(rest.slice(0, 1))
+    if (rest.length > 1) parts.push(rest.slice(1, 3))
+    if (rest.length > 3) parts.push(rest.slice(3, 5))
+    if (rest.length > 5) parts.push(rest.slice(5, 7))
+    if (rest.length > 7) parts.push(rest.slice(7, 9))
+    return parts.join(" ")
+  }
+
+  function isNameValid(name: string) {
+    return name.trim().split(/\s+/).filter(Boolean).length >= 2
+  }
+
+  function isEmailValid(email: string) {
+    return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(email)
+  }
+
+  function isPhoneValid(phone: string) {
+    return phone.replace(/[^\d]/g, "").length === 11
+  }
+
+  const isFormValid =
+    isNameValid(formData.name) &&
+    isEmailValid(formData.email) &&
+    isPhoneValid(formData.phone) &&
+    formData.subject !== "" &&
+    (formData.subject !== "autre" || customSubject.trim().length >= 2) &&
+    formData.message.trim().length >= 30
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +96,7 @@ export function ContactForm() {
       name: formData.name,
       email: formData.email,
       phone: formData.phone || null,
-      subject: formData.subject || null,
+      subject: formData.subject === "autre" ? (customSubject.trim() || "Autre") : formData.subject || null,
       message: formData.message || null,
     })
 
@@ -93,20 +159,28 @@ export function ContactForm() {
                       id="name"
                       placeholder="Jean Dupont"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
+                      onChange={(e) => setFormData({ ...formData, name: sanitizeName(e.target.value) })}
+                      onBlur={() => touch("name")}
                     />
+                    {touched.name && !isNameValid(formData.name) && (
+                      <p className="text-xs text-destructive">Indiquez prénom et nom (ex : Jean Dupont)</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
-                      type="email"
+                      type="text"
+                      inputMode="email"
+                      autoComplete="email"
                       placeholder="jean@example.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value.toLowerCase() })}
+                      onBlur={() => touch("email")}
                     />
+                    {touched.email && !isEmailValid(formData.email) && (
+                      <p className="text-xs text-destructive">Adresse email invalide</p>
+                    )}
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -117,41 +191,70 @@ export function ContactForm() {
                       type="tel"
                       placeholder="+33 6 12 34 56 78"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required
+                      onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
+                      onBlur={() => touch("phone")}
                     />
+                    {touched.phone && !isPhoneValid(formData.phone) && (
+                      <p className="text-xs text-destructive">Numéro incomplet (format : +33 6 12 34 56 78)</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="subject">Sujet *</Label>
                     <Select
                       value={formData.subject}
-                      onValueChange={(value) => setFormData({ ...formData, subject: value })}
-                      required
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, subject: value })
+                        if (value !== "autre") setCustomSubject("")
+                      }}
                     >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Sélectionnez un sujet" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="inscription">Inscription chauffeur</SelectItem>
-                      <SelectItem value="forfait">Renseignement forfait</SelectItem>
-                      <SelectItem value="partenariat">Partenariat</SelectItem>
-                      <SelectItem value="support">Support technique</SelectItem>
-                      <SelectItem value="autre">Autre</SelectItem>
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionnez un sujet" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="inscription">Inscription chauffeur</SelectItem>
+                        <SelectItem value="forfait">Renseignement forfait</SelectItem>
+                        <SelectItem value="partenariat">Partenariat</SelectItem>
+                        <SelectItem value="support">Support technique</SelectItem>
+                        <SelectItem value="autre">Autre</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
+                {formData.subject === "autre" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="customSubject">Précisez le sujet *</Label>
+                    <Input
+                      id="customSubject"
+                      placeholder="Décrivez brièvement votre sujet..."
+                      value={customSubject}
+                      onChange={(e) => setCustomSubject(capitalizeSentences(e.target.value))}
+                      onBlur={() => touch("customSubject")}
+                    />
+                    {touched.customSubject && customSubject.trim().length < 2 && (
+                      <p className="text-xs text-destructive">Veuillez préciser le sujet</p>
+                    )}
+                  </div>
+                )}
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message">
+                    Message
+                    {touched.message && formData.message.trim().length > 0 && formData.message.trim().length < 30 && (
+                      <span className="ml-1 text-xs text-muted-foreground">({formData.message.trim().length}/30 car. min.)</span>
+                    )}
+                  </Label>
                   <Textarea
                     id="message"
                     placeholder="Décrivez votre projet ou posez-nous vos questions..."
                     rows={4}
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, message: capitalizeSentences(e.target.value) })}
+                    onBlur={() => touch("message")}
                   />
+                  {touched.message && formData.message.trim().length < 30 && (
+                    <p className="text-xs text-destructive">Message trop court (30 caractères minimum)</p>
+                  )}
                 </div>
-                <Button type="submit" className="w-full" size="lg" disabled={status === "loading"}>
+                <Button type="submit" className="w-full" size="lg" disabled={status === "loading" || !isFormValid}>
                   {status === "loading" ? "Envoi en cours..." : "Envoyer le message"}
                 </Button>
                 {status === "error" && (
