@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Upload, CheckCircle2, FileText, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { createClient } from "@/lib/supabase/client"
 
 const PLATFORMS = [
   { id: "uber", label: "Uber" },
@@ -100,6 +99,8 @@ export function InscriptionForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const touch = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }))
   const [platforms, setPlatforms] = useState<PlatformMap>({ uber: false, bolt: false, heetch: false })
   const [files, setFiles] = useState<FileMap>(
     Object.fromEntries(DOCUMENTS.map((d) => [d.id, null]))
@@ -113,9 +114,59 @@ export function InscriptionForm() {
     forfait: "",
     message: "",
   })
+  // Antispam : timestamp de chargement du formulaire
+  const loadedAt = useRef<number>(Date.now())
+
+  const [cguAccepted, setCguAccepted] = useState(false)
 
   const missingRequired = DOCUMENTS.filter((d) => d.required && !files[d.id])
   const noPlatform = !Object.values(platforms).some(Boolean)
+
+  function capitalizeSentences(text: string) {
+    return text.replace(/(^|[.!?]\s+)([a-z\u00e0-\u00ff])/g, (_, sep, char) => sep + char.toUpperCase())
+  }
+
+  function sanitizeName(text: string) {
+    const filtered = text.replace(/[^a-zA-Z\u00C0-\u024F\s-]/g, "")
+    return filtered
+      .split(" ")
+      .map((word) =>
+        word
+          .split("-")
+          .map((part) => (part ? part.charAt(0).toUpperCase() + part.slice(1) : ""))
+          .join("-")
+      )
+      .join(" ")
+  }
+
+  function isEmailValid(email: string) {
+    return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(email)
+  }
+
+  function formatPhone(raw: string) {
+    let digits = raw.replace(/[^\d]/g, "")
+    if (digits.startsWith("0") && digits.length > 1) {
+      digits = "33" + digits.slice(1)
+    }
+    digits = digits.slice(0, 11)
+    if (!digits) return ""
+    const parts = []
+    let rest = digits
+    if (rest.startsWith("33")) {
+      parts.push("+33")
+      rest = rest.slice(2)
+    }
+    if (rest.length > 0) parts.push(rest.slice(0, 1))
+    if (rest.length > 1) parts.push(rest.slice(1, 3))
+    if (rest.length > 3) parts.push(rest.slice(3, 5))
+    if (rest.length > 5) parts.push(rest.slice(5, 7))
+    if (rest.length > 7) parts.push(rest.slice(7, 9))
+    return parts.join(" ")
+  }
+
+  function isPhoneValid(phone: string) {
+    return phone.replace(/[^\d]/g, "").length === 11
+  }
 
   const handleFile = (id: string, file: File | null) => {
     setFiles((prev) => ({ ...prev, [id]: file }))
@@ -127,12 +178,11 @@ export function InscriptionForm() {
     setSubmitting(true)
     setSubmitError("")
 
-    const supabase = createClient()
-
-    // 1. Insérer la demande en base
-    const { data: demande, error: insertError } = await supabase
-      .from("demandes_inscription")
-      .insert({
+    // 1. Envoyer les données via la route API (antispam côté serveur)
+    const res = await fetch("/api/inscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         prenom: formData.prenom,
         nom: formData.nom,
         email: formData.email,
@@ -141,28 +191,32 @@ export function InscriptionForm() {
         forfait: formData.forfait || null,
         message: formData.message || null,
         plateformes: Object.keys(platforms).filter((k) => platforms[k]),
-        statut: "en_attente",
-      })
-      .select("id")
-      .single()
+        // Antispam
+        _loadedAt: loadedAt.current,
+        _trap: "",
+      }),
+    })
 
-    if (insertError || !demande) {
-      setSubmitError("Une erreur est survenue. Veuillez réessayer.")
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setSubmitError(data.error ?? "Une erreur est survenue. Veuillez réessayer.")
       setSubmitting(false)
       return
     }
 
-    // 2. Uploader les documents dans Supabase Storage
+    const { id: demandeId } = await res.json()
+
+    // 2. Uploader les documents via la route API (service role, bypass RLS)
     const uploadErrors: string[] = []
     for (const doc of DOCUMENTS) {
       const file = files[doc.id]
       if (!file) continue
-      const ext = file.name.split(".").pop()
-      const path = `${demande.id}/${doc.id}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from("documents-inscription")
-        .upload(path, file, { upsert: true })
-      if (uploadError) uploadErrors.push(doc.label)
+      const fd = new FormData()
+      fd.append("demandeId", demandeId)
+      fd.append("docId", doc.id)
+      fd.append("file", file)
+      const upRes = await fetch("/api/inscription/upload", { method: "POST", body: fd })
+      if (!upRes.ok) uploadErrors.push(doc.label)
     }
 
     if (uploadErrors.length > 0) {
@@ -195,6 +249,11 @@ export function InscriptionForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
+      {/* Honeypot — caché visuellement, ne doit pas être rempli */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }}>
+        <label htmlFor="_trap">Ne pas remplir</label>
+        <input id="_trap" name="_trap" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
 
       {/* Informations personnelles */}
       <section className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-6">
@@ -211,7 +270,7 @@ export function InscriptionForm() {
               placeholder="Jean"
               required
               value={formData.prenom}
-              onChange={(e) => setFormData((p) => ({ ...p, prenom: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, prenom: sanitizeName(e.target.value) }))}
             />
           </div>
           <div className="space-y-2">
@@ -221,7 +280,7 @@ export function InscriptionForm() {
               placeholder="Dupont"
               required
               value={formData.nom}
-              onChange={(e) => setFormData((p) => ({ ...p, nom: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, nom: sanitizeName(e.target.value) }))}
             />
           </div>
         </div>
@@ -231,12 +290,17 @@ export function InscriptionForm() {
             <Label htmlFor="email">Email <span className="text-muted-foreground">*</span></Label>
             <Input
               id="email"
-              type="email"
+              type="text"
+              inputMode="email"
+              autoComplete="email"
               placeholder="jean.dupont@exemple.fr"
-              required
               value={formData.email}
-              onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value.toLowerCase().replace(/[^a-z0-9._%+\-@]/g, "") }))}
+              onBlur={() => touch("email")}
             />
+            {touched.email && !isEmailValid(formData.email) && (
+              <p className="text-xs text-destructive">Adresse email invalide</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="telephone">Téléphone <span className="text-muted-foreground">*</span></Label>
@@ -244,11 +308,15 @@ export function InscriptionForm() {
               id="telephone"
               type="tel"
               placeholder="+33 6 12 34 56 78"
-              required
               value={formData.telephone}
-              onChange={(e) => setFormData((p) => ({ ...p, telephone: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, telephone: formatPhone(e.target.value) }))}
+              onBlur={() => touch("telephone")}
             />
-            <p className="text-xs text-muted-foreground">Numéro associé à vos comptes Uber, Bolt, Heetch… si vous avez des comptes actifs.</p>
+            {touched.telephone && !isPhoneValid(formData.telephone) ? (
+              <p className="text-xs text-destructive">Numéro incomplet (format : +33 6 12 34 56 78)</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">Numéro associé à vos comptes Uber, Bolt, Heetch… si vous avez des comptes actifs.</p>
+            )}
           </div>
         </div>
 
@@ -322,7 +390,7 @@ export function InscriptionForm() {
             placeholder="Présentez-vous, posez vos questions ou précisez votre situation..."
             rows={4}
             value={formData.message}
-            onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
+            onChange={(e) => setFormData((p) => ({ ...p, message: capitalizeSentences(e.target.value) }))}
           />
         </div>
       </section>
@@ -367,7 +435,7 @@ export function InscriptionForm() {
       {/* CGU + submit */}
       <div className="space-y-4">
         <label className="flex items-start gap-3 cursor-pointer">
-          <Checkbox id="cgu" required className="mt-0.5" />
+          <Checkbox id="cgu" checked={cguAccepted} onCheckedChange={(v) => setCguAccepted(!!v)} className="mt-0.5" />
           <span className="text-sm text-muted-foreground leading-relaxed">
             J'accepte les{" "}
             <a href="/cgu" className="text-foreground underline underline-offset-2 hover:no-underline">
@@ -392,7 +460,7 @@ export function InscriptionForm() {
           type="submit"
           size="lg"
           className="w-full sm:w-auto"
-          disabled={missingRequired.length > 0 || noPlatform || submitting}
+          disabled={missingRequired.length > 0 || noPlatform || !cguAccepted || submitting}
         >
           {submitting ? "Envoi en cours..." : "Envoyer ma demande"}
         </Button>
