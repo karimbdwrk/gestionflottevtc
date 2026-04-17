@@ -1,10 +1,10 @@
 {
-  "name": "fleetconnect",
+  "name": "gestionflottevtc",
   "version": "0.0.1",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS=--max-old-space-size=8192 next dev",
+    "dev": "NODE_OPTIONS=\"--max-old-space-size=8192 --max-semi-space-size=64\" next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
