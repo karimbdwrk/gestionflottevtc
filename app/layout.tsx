@@ -9,9 +9,46 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'FleetConnect - Gestion de Flotte VTC | Uber, Bolt, Heetch',
-  description: 'Plateforme de gestion de flotte VTC. Connectez vos chauffeurs à Uber, Bolt et Heetch. Simplifiez votre activité avec nos outils professionnels.',
-  generator: 'v0.app',
+  metadataBase: new URL('https://gestionflottevtc.fr'),
+  title: {
+    default: 'DRIVE PRO — Gestion de flotte VTC à Paris | Rattachement Uber, Bolt, Heetch',
+    template: '%s | DRIVE PRO',
+  },
+  description:
+    'DRIVE PRO vous accompagne pour devenir chauffeur VTC à Paris. Rattachement Uber, Bolt et Heetch en 24h, paiement hebdomadaire, support 7j/7 et gestion administrative complète.',
+  keywords: [
+    'gestion de flotte VTC',
+    'rattachement VTC',
+    'chauffeur VTC Paris',
+    'rattachement Uber',
+    'rattachement Bolt',
+    'rattachement Heetch',
+    'devenir VTC',
+    'VTC Île-de-France',
+  ],
+  authors: [{ name: 'DRIVE PRO' }],
+  creator: 'DRIVE PRO',
+  publisher: 'DRIVE PRO',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://gestionflottevtc.fr',
+    siteName: 'DRIVE PRO',
+    title: 'DRIVE PRO — Gestion de flotte VTC à Paris | Rattachement Uber, Bolt, Heetch',
+    description:
+      'Rattachement VTC rapide à Paris. Uber, Bolt, Heetch en 24h. Paiement hebdomadaire et support 7j/7.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DRIVE PRO — Gestion de flotte VTC à Paris',
+    description:
+      'Rattachement VTC rapide à Paris. Uber, Bolt, Heetch en 24h. Paiement hebdomadaire et support 7j/7.',
+  },
   icons: {
     icon: [
       {

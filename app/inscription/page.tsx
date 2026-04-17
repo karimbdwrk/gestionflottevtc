@@ -4,8 +4,15 @@ import { InscriptionForm } from "@/components/inscription-form"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Inscription — DRIVE PRO",
-  description: "Déposez votre dossier pour rejoindre la plateforme DRIVE PRO et accéder aux services de gestion de flotte VTC.",
+  title: 'Inscription chauffeur VTC — Déposez votre dossier',
+  description:
+    'Déposez votre dossier en ligne pour rejoindre DRIVE PRO. Rattachement VTC rapide sur Uber, Bolt et Heetch à Paris. Formulaire simple, activation en 24h.',
+  alternates: { canonical: 'https://gestionflottevtc.fr/inscription' },
+  openGraph: {
+    url: 'https://gestionflottevtc.fr/inscription',
+    title: 'Inscription chauffeur VTC — DRIVE PRO',
+    description: 'Déposez votre dossier pour un rattachement VTC rapide sur Uber, Bolt, Heetch.',
+  },
 }
 
 export default function InscriptionPage() {

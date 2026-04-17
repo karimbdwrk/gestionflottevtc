@@ -3,8 +3,10 @@ import { Footer } from "@/components/footer"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Politique de Confidentialité — DRIVE PRO",
-  description: "Politique de confidentialité et traitement des données personnelles de la plateforme DRIVE PRO.",
+  title: 'Politique de Confidentialité',
+  description: 'Politique de confidentialité et traitement des données personnelles (RGPD) de la plateforme DRIVE PRO, service de gestion de flotte VTC.',
+  alternates: { canonical: 'https://gestionflottevtc.fr/confidentialite' },
+  robots: { index: false, follow: false },
 }
 
 export default function ConfidentialitePage() {

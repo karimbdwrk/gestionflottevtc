@@ -3,8 +3,10 @@ import { Footer } from "@/components/footer"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Conditions Générales d'Utilisation — DRIVE PRO",
-  description: "Conditions générales d'utilisation de la plateforme DRIVE PRO, service de gestion de flotte VTC.",
+  title: "Conditions Générales d'Utilisation",
+  description: "Consultez les conditions générales d'utilisation de la plateforme DRIVE PRO, service de gestion de flotte VTC à Paris.",
+  alternates: { canonical: 'https://gestionflottevtc.fr/cgu' },
+  robots: { index: false, follow: false },
 }
 
 export default function CguPage() {
