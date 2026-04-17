@@ -118,9 +118,12 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: Omit<React.ComponentProps<typeof RechartsPrimitive.Tooltip>, 'payload'> &
+}: Omit<React.ComponentProps<typeof RechartsPrimitive.Tooltip>, 'payload' | 'label' | 'labelFormatter' | 'formatter'> &
   React.ComponentProps<'div'> & {
     payload?: Array<{ name?: string; value?: string | number; payload?: Record<string, unknown>; color?: string; dataKey?: string | number }>
+    label?: string | number
+    labelFormatter?: (label: string | number, payload: unknown[]) => React.ReactNode
+    formatter?: (value: unknown, name: string, item: unknown, index: number, payload: unknown) => React.ReactNode
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: 'line' | 'dot' | 'dashed'
