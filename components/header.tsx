@@ -18,17 +18,11 @@ export function Header() {
               DRIVE PRO
             </Link>
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Forfaits
+              <Link href="/rattachement-vtc" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Gestion de flotte
               </Link>
-              <Link href="/#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Comment ça marche
-              </Link>
-              <Link href="/#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Pourquoi nous
-              </Link>
-              <Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Contact
+              <Link href="/devenir-chauffeur-vtc" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Devenir chauffeur
               </Link>
             </div>
           </div>
@@ -55,17 +49,11 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
-              <Link href="/#forfaits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Forfaits
+              <Link href="/rattachement-vtc" className="text-sm text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Gestion de flotte VTC
               </Link>
-              <Link href="/#process" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Comment ça marche
-              </Link>
-              <Link href="/#reassurance" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Pourquoi nous
-              </Link>
-              <Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Contact
+              <Link href="/inscription" className="text-sm text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Inscription
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 {/* <Button variant="ghost" size="sm" className="justify-start">
