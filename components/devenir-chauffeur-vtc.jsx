@@ -368,51 +368,6 @@ export function DevenirChauffeurVtc() {
         </div>
       </section>
 
-      {/* ── CTA WhatsApp ─────────────────────────────────────────── */}
-      {/* <section className="bg-foreground py-20 text-background md:py-28">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-background/10 px-4 py-1.5 text-sm text-background/70">
-            <MessageCircle className="h-3.5 w-3.5" />
-            Réponse rapide garantie
-          </div>
-          <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
-            Démarrez dès maintenant
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl leading-relaxed text-background/70">
-            Vous souhaitez devenir chauffeur VTC rapidement ? DRIVE PRO vous
-            accompagne pour un rattachement VTC simple et rapide. Contactez-nous
-            dès maintenant via WhatsApp pour commencer sans attendre.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button
-              size="lg"
-              variant="secondary"
-              asChild
-              className="gap-2 bg-background text-foreground hover:bg-background/90"
-            >
-              <a
-                href="https://wa.me/33600000000"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="h-4 w-4" />
-                Nous contacter sur WhatsApp
-              </a>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              asChild
-              className="gap-2 border-background/30 text-background hover:bg-background/10"
-            >
-              <a href="/inscription">
-                Déposer mon dossier <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
-          </div>
-        </div>
-      </section> */}
-
       {/* ── Contact form ─────────────────────────────────────────── */}
       <div id="contact">
         <ContactForm />

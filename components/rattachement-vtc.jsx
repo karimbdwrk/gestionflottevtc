@@ -303,10 +303,10 @@ export function RattachementVtc() {
               Nos avantages
             </div>
             <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground md:text-3xl">
-              Pourquoi choisir la gestion de flotte VTC ?
+              Pourquoi choisir le rattachement VTC ?
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              La gestion de flotte est aujourd'hui la solution la plus utilisée
+              Le rattachement VTC est aujourd'hui la solution la plus utilisée
               par les chauffeurs souhaitant travailler efficacement et sans
               friction.
             </p>
