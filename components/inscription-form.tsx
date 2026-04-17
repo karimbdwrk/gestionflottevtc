@@ -18,13 +18,11 @@ const PLATFORMS = [
 ]
 
 const DOCUMENTS = [
-  { id: "identity", label: "Pièce d'identité", description: "CNI recto/verso ou passeport", required: true },
-  { id: "permis", label: "Permis de conduire", description: "Recto/verso en cours de validité", required: true },
-  { id: "carte_vtc", label: "Carte professionnelle VTC", description: "Delivrée par la préfecture", required: true },
-  { id: "assurance", label: "Attestation d'assurance", description: "Assurance VTC du véhicule", required: true },
-  { id: "casier", label: "Extrait de casier judiciaire", description: "Bulletin n°3 (moins de 3 mois)", required: true },
-  { id: "domicile", label: "Justificatif de domicile", description: "Moins de 3 mois", required: false },
-  { id: "kbis", label: "Kbis ou attestation URSSAF", description: "Si auto-entrepreneur ou société", required: false },
+  { id: "carte_grise", label: "Carte grise du véhicule", description: "Document d'immatriculation", required: true },
+  { id: "memo_assurance", label: "Mémo d'assurance du véhicule", description: "Document récapitulatif d'assurance", required: true },
+  { id: "carte_vtc_recto", label: "Carte VTC — recto", description: "Carte professionnelle VTC recto", required: true },
+  { id: "carte_vtc_verso", label: "Carte VTC — verso", description: "Carte professionnelle VTC verso", required: true },
+  { id: "rc_pro", label: "Assurance RC Pro", description: "Responsabilité civile professionnelle", required: true },
 ]
 
 type FileMap = Record<string, File | null>
@@ -111,8 +109,6 @@ export function InscriptionForm() {
     nom: "",
     email: "",
     telephone: "",
-    dateNaissance: "",
-    adresse: "",
     experience: "",
     forfait: "",
     message: "",
@@ -141,8 +137,6 @@ export function InscriptionForm() {
         nom: formData.nom,
         email: formData.email,
         telephone: formData.telephone,
-        date_naissance: formData.dateNaissance || null,
-        adresse: formData.adresse,
         experience: formData.experience || null,
         forfait: formData.forfait || null,
         message: formData.message || null,
@@ -214,7 +208,7 @@ export function InscriptionForm() {
             <Label htmlFor="prenom">Prénom <span className="text-muted-foreground">*</span></Label>
             <Input
               id="prenom"
-              placeholder="Mohamed"
+              placeholder="Jean"
               required
               value={formData.prenom}
               onChange={(e) => setFormData((p) => ({ ...p, prenom: e.target.value }))}
@@ -224,7 +218,7 @@ export function InscriptionForm() {
             <Label htmlFor="nom">Nom <span className="text-muted-foreground">*</span></Label>
             <Input
               id="nom"
-              placeholder="Benali"
+              placeholder="Dupont"
               required
               value={formData.nom}
               onChange={(e) => setFormData((p) => ({ ...p, nom: e.target.value }))}
@@ -238,7 +232,7 @@ export function InscriptionForm() {
             <Input
               id="email"
               type="email"
-              placeholder="vous@exemple.fr"
+              placeholder="jean.dupont@exemple.fr"
               required
               value={formData.email}
               onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
@@ -254,32 +248,11 @@ export function InscriptionForm() {
               value={formData.telephone}
               onChange={(e) => setFormData((p) => ({ ...p, telephone: e.target.value }))}
             />
+            <p className="text-xs text-muted-foreground">Numéro associé à vos comptes Uber, Bolt, Heetch… si vous avez des comptes actifs.</p>
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="dateNaissance">Date de naissance <span className="text-muted-foreground">*</span></Label>
-            <Input
-              id="dateNaissance"
-              type="date"
-              required
-              value={formData.dateNaissance}
-              onChange={(e) => setFormData((p) => ({ ...p, dateNaissance: e.target.value }))}
-            />
-          </div>
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="adresse">Adresse complète <span className="text-muted-foreground">*</span></Label>
-          <Input
-            id="adresse"
-            placeholder="12 rue de la Paix, 75001 Paris"
-            required
-            value={formData.adresse}
-            onChange={(e) => setFormData((p) => ({ ...p, adresse: e.target.value }))}
-          />
-        </div>
       </section>
 
       {/* Informations professionnelles */}
