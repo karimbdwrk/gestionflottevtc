@@ -36,7 +36,7 @@ const features = [
 const stats = [
   { value: "250+", label: "Chauffeurs actifs" },
   { value: "4", label: "Plateformes intégrées" },
-  { value: "98%", label: "Taux de satisfaction" },
+  { value: "7j/7", label: "Support disponible" },
   { value: "24h", label: "Délai d'activation" },
 ]
 
