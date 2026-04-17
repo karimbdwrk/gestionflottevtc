@@ -175,7 +175,7 @@ export function ContactForm() {
                       autoComplete="email"
                       placeholder="jean@example.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value.toLowerCase() })}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value.toLowerCase().replace(/[^a-z0-9._%+\-@]/g, "") })}
                       onBlur={() => touch("email")}
                     />
                     {touched.email && !isEmailValid(formData.email) && (
