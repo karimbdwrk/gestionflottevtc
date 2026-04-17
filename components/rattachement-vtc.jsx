@@ -11,6 +11,8 @@ import {
   MessageCircle,
 } from "lucide-react"
 
+import { ContactForm } from "@/components/contact-form"
+
 const rattachementBenefits = [
   "Être opérationnel en très peu de temps",
   "Éviter les démarches longues et complexes",
@@ -398,7 +400,7 @@ export function RattachementVtc() {
       </section>
 
       {/* ── CTA Contact ──────────────────────────────────────────── */}
-      <section className="bg-foreground py-20 text-background md:py-28">
+      {/* <section className="bg-foreground py-20 text-background md:py-28">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-background/10 px-4 py-1.5 text-sm text-background/70">
             <MessageCircle className="h-3.5 w-3.5" />
@@ -440,14 +442,15 @@ export function RattachementVtc() {
             </Button>
           </div>
         </div>
-      </section>
+      </section> */}
+      <ContactForm />
 
       {/* ── SEO footer ───────────────────────────────────────────── */}
       <section className="border-t border-border py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="mx-auto max-w-4xl text-center text-xs leading-relaxed text-muted-foreground/50">
-            Mots-clés : gestion de flotte VTC, rattachement VTC, rattachement
-            Uber, rattachement Bolt, rattachement Heetch, chauffeur VTC Paris,
+            Gestion de flotte VTC, rattachement VTC, rattachement Uber,
+            rattachement Bolt, rattachement Heetch, chauffeur VTC Paris,
             démarrer VTC rapidement, gagner de l'argent VTC, optimisation
             revenus VTC, flotte VTC Île-de-France.
           </p>
